@@ -326,6 +326,14 @@ void CConfigManager::init() {
     SHADOWABLE("label");
     CLICKABLE("label");
 
+    m_config.addSpecialCategory("pattern-lock", Hyprlang::SSpecialCategoryOptions{.key = nullptr, .anonymousKeyBased = true});
+    m_config.addSpecialConfigValue("pattern-lock", "monitor", Hyprlang::STRING{""});
+    m_config.addSpecialConfigValue("pattern-lock", "position", LAYOUTCONFIG("0,0"));
+    m_config.addSpecialConfigValue("pattern-lock", "halign", Hyprlang::STRING{"center"});
+    m_config.addSpecialConfigValue("pattern-lock", "valign", Hyprlang::STRING{"center"});
+    m_config.addSpecialConfigValue("pattern-lock", "pattern", Hyprlang::STRING{""});
+    m_config.addSpecialConfigValue("pattern-lock", "zindex", Hyprlang::INT{0});
+
     m_config.registerHandler(&::handleSource, "source", {.allowFlags = false});
     m_config.registerHandler(&::handleBezier, "bezier", {.allowFlags = false});
     m_config.registerHandler(&::handleAnimation, "animation", {.allowFlags = false});
@@ -519,6 +527,21 @@ std::vector<CConfigManager::SWidgetConfig> CConfigManager::getWidgetConfigs() {
             }
         });
         // clang-format on
+    }
+
+    keys = m_config.listKeysForSpecialCategory("pattern-lock");
+    for (auto& k : keys) {
+        result.push_back(CConfigManager::SWidgetConfig{
+            .type = "pattern-lock",
+            .monitor = std::any_cast<Hyprlang::STRING>(m_config.getSpecialConfigValue("pattern-lock", "monitor", k.c_str())),
+            .values = {
+                {"position", m_config.getSpecialConfigValue("pattern-lock", "position", k.c_str())},
+                {"halign", m_config.getSpecialConfigValue("pattern-lock", "halign", k.c_str())},
+                {"valign", m_config.getSpecialConfigValue("pattern-lock", "valign", k.c_str())},
+                {"pattern", m_config.getSpecialConfigValue("pattern-lock", "pattern", k.c_str())},
+                {"zindex", m_config.getSpecialConfigValue("pattern-lock", "zindex", k.c_str())},
+            }
+        });
     }
 
     return result;

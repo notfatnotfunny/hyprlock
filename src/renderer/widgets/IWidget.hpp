@@ -29,7 +29,7 @@ class IWidget {
     };
     virtual void onClick(uint32_t button, bool down, const Vector2D& pos) {}
     virtual void onHover(const Vector2D& pos) {}
-    bool         containsPoint(const Vector2D& pos) const;
+    virtual bool containsPoint(const Vector2D& pos) const { return false; }
 
     struct SFormatResult {
         std::string formatted;

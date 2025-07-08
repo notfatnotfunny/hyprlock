@@ -17,6 +17,8 @@
 #include "widgets/Label.hpp"
 #include "widgets/Image.hpp"
 #include "widgets/Shape.hpp"
+#include "widgets/PatternLockWidget.hpp"
+#include <iostream>
 
 inline const float fullVerts[] = {
     1, 0, // top right
@@ -398,6 +400,7 @@ std::vector<ASP<IWidget>>& CRenderer::getOrCreateWidgetsFor(const CSessionLockSu
     RASSERT(surf.m_outputID != OUTPUT_INVALID, "Invalid output ID!");
 
     if (!widgets.contains(surf.m_outputID)) {
+        std::cout << "[Renderer] Creating widgets for output ID: " << surf.m_outputID << std::endl;
         auto CWIDGETS = g_pConfigManager->getWidgetConfigs();
 
         std::ranges::sort(CWIDGETS, [](CConfigManager::SWidgetConfig& a, CConfigManager::SWidgetConfig& b) {
@@ -410,6 +413,7 @@ std::vector<ASP<IWidget>>& CRenderer::getOrCreateWidgetsFor(const CSessionLockSu
                 continue;
 
             // by type
+            std::cout << "[Renderer] Creating widget of type: " << c.type << std::endl;
             if (c.type == "background") {
                 createWidget<CBackground>(widgets[surf.m_outputID]);
             } else if (c.type == "input-field") {
@@ -420,6 +424,8 @@ std::vector<ASP<IWidget>>& CRenderer::getOrCreateWidgetsFor(const CSessionLockSu
                 createWidget<CShape>(widgets[surf.m_outputID]);
             } else if (c.type == "image") {
                 createWidget<CImage>(widgets[surf.m_outputID]);
+            } else if (c.type == "pattern-lock") {
+                createWidget<PatternLockWidget>(widgets[surf.m_outputID]);
             } else {
                 Debug::log(ERR, "Unknown widget type: {}", c.type);
                 continue;

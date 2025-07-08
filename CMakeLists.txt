@@ -89,7 +89,8 @@ pkg_check_modules(
   pam
   hyprutils>=0.8.0
   sdbus-c++>=2.0.0
-  hyprgraphics)
+  hyprgraphics
+  cairomm-1.0)
 
 file(GLOB_RECURSE SRCFILES CONFIGURE_DEPENDS "src/*.cpp")
 add_executable(hyprlock ${SRCFILES})

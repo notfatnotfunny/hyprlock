@@ -7,6 +7,7 @@
 #include <pwd.h>
 #include <hyprutils/string/String.hpp>
 #include <hyprutils/string/VarList.hpp>
+#include <iostream> // Added for debug output
 
 using namespace Hyprutils::String;
 
@@ -29,7 +30,6 @@ static Vector2D rotateVector(const Vector2D& vec, const double& ang) {
 }
 
 Vector2D IWidget::posFromHVAlign(const Vector2D& viewport, const Vector2D& size, const Vector2D& offset, const std::string& halign, const std::string& valign, const double& ang) {
-
     // offset after rotation for alignment
     Vector2D rot;
     if (ang != 0)
@@ -273,8 +273,4 @@ void IWidget::setHover(bool hover) {
 
 bool IWidget::isHovered() const {
     return hovered;
-}
-
-bool IWidget::containsPoint(const Vector2D& pos) const {
-    return getBoundingBoxWl().containsPoint(pos);
 }

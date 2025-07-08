@@ -23,6 +23,7 @@
 #include <sdbus-c++/sdbus-c++.h>
 #include <hyprutils/os/Process.hpp>
 #include <malloc.h>
+#include <iostream>
 
 using namespace Hyprutils::OS;
 
@@ -704,15 +705,20 @@ void CHyprlock::onClick(uint32_t button, bool down, const Vector2D& pos) {
     if (!m_focusedOutput.lock())
         return;
 
-    // TODO: add the UNLIKELY marco from Hyprland
     if (!m_focusedOutput->m_sessionLockSurface)
         return;
 
-    const auto SCALEDPOS = pos * m_focusedOutput->m_sessionLockSurface->fractionalScale;
+    double fractionalScale = m_focusedOutput->m_sessionLockSurface->fractionalScale;
+    Vector2D SCALEDPOS = pos * fractionalScale;
     const auto widgets   = g_pRenderer->getOrCreateWidgetsFor(*m_focusedOutput->m_sessionLockSurface);
+    if (widgets.empty()) {
+        return;
+    }
     for (const auto& widget : widgets) {
-        if (widget->containsPoint(SCALEDPOS))
-            widget->onClick(button, down, pos);
+        std::string typeName = typeid(*widget).name();
+        bool contains = widget->containsPoint(SCALEDPOS);
+        if (contains)
+            widget->onClick(button, down, SCALEDPOS);
     }
 }
 

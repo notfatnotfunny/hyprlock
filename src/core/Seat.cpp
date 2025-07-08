@@ -6,6 +6,7 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <linux/input-event-codes.h>
+#include <iostream>
 
 CSeatManager::~CSeatManager() {
     if (m_pXKBState)
@@ -79,10 +80,32 @@ void CSeatManager::registerSeat(SP<CCWlSeat> seat) {
         }
         if (caps & WL_SEAT_CAPABILITY_TOUCH) {
             m_pTouch = makeShared<CCWlTouch>(r->sendGetTouch());
+            
+            // Store last touch position for touch up events
+            static Hyprutils::Math::Vector2D lastTouchPos = {0, 0};
+            
             m_pTouch->setDown([](CCWlTouch* r, uint32_t serial, uint32_t time, wl_proxy* surface, int32_t id, wl_fixed_t x, wl_fixed_t y) {
-                g_pHyprlock->onClick(BTN_LEFT, true, {wl_fixed_to_double(x), wl_fixed_to_double(y)});
+                // Set focused output based on touched surface
+                for (const auto& POUTPUT : g_pHyprlock->m_vOutputs) {
+                    if (!POUTPUT->m_sessionLockSurface)
+                        continue;
+                    const auto& PWLSURFACE = POUTPUT->m_sessionLockSurface->getWlSurface();
+                    if (PWLSURFACE->resource() == surface) {
+                        g_pHyprlock->m_focusedOutput = POUTPUT;
+                    }
+                }
+                lastTouchPos = {wl_fixed_to_double(x), wl_fixed_to_double(y)};
+                g_pHyprlock->onClick(BTN_LEFT, true, lastTouchPos);
             });
-            m_pTouch->setUp([](CCWlTouch* r, uint32_t serial, uint32_t time, int32_t id) { g_pHyprlock->onClick(BTN_LEFT, false, {0, 0}); });
+            m_pTouch->setMotion([](CCWlTouch* r, uint32_t time, int32_t id, wl_fixed_t x, wl_fixed_t y) {
+                lastTouchPos = {wl_fixed_to_double(x), wl_fixed_to_double(y)};
+                g_pHyprlock->onClick(BTN_LEFT, true, lastTouchPos);
+            });
+            m_pTouch->setUp([](CCWlTouch* r, uint32_t serial, uint32_t time, int32_t id) {
+                std::cout << "[Seat] Touch up event received for id: " << id << std::endl;
+                std::cout << "[Seat] Touch up position: (" << lastTouchPos.x << ", " << lastTouchPos.y << ")" << std::endl;
+                g_pHyprlock->onClick(BTN_LEFT, false, lastTouchPos);
+            });
         };
         if (caps & WL_SEAT_CAPABILITY_KEYBOARD) {
             m_pKeeb = makeShared<CCWlKeyboard>(r->sendGetKeyboard());
