@@ -31,9 +31,10 @@ private:
     std::vector<int> m_configuredPattern;
     static constexpr int GRID_SIZE = 3;
     Vector2D viewport = {300, 300};
-    Vector2D position = {0, 0};
+    Vector2D position = {0, 0}; // offset from anchor
     std::string halign = "center";
     std::string valign = "center";
+    int zindex = 0;
     AWP<PatternLockWidget> m_self;
     int pointToDotIndex(const Hyprutils::Math::Vector2D& pt) const;
     std::vector<int> parsePatternString(const std::string& patternStr) const;

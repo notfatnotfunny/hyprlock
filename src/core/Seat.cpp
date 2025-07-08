@@ -102,8 +102,6 @@ void CSeatManager::registerSeat(SP<CCWlSeat> seat) {
                 g_pHyprlock->onClick(BTN_LEFT, true, lastTouchPos);
             });
             m_pTouch->setUp([](CCWlTouch* r, uint32_t serial, uint32_t time, int32_t id) {
-                std::cout << "[Seat] Touch up event received for id: " << id << std::endl;
-                std::cout << "[Seat] Touch up position: (" << lastTouchPos.x << ", " << lastTouchPos.y << ")" << std::endl;
                 g_pHyprlock->onClick(BTN_LEFT, false, lastTouchPos);
             });
         };

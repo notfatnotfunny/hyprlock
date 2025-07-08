@@ -408,16 +408,21 @@ std::vector<ASP<IWidget>>& CRenderer::getOrCreateWidgetsFor(const CSessionLockSu
         });
 
         const auto POUTPUT = surf.m_outputRef.lock();
+        // Check global config option first
+        long hideInput = *g_pConfigManager->getValue<Hyprlang::INT>("general:hide_text_input_field");
+        
         for (auto& c : CWIDGETS) {
             if (!c.monitor.empty() && c.monitor != POUTPUT->stringPort && !POUTPUT->stringDesc.starts_with(c.monitor) && !("desc:" + POUTPUT->stringDesc).starts_with(c.monitor))
                 continue;
 
             // by type
-            std::cout << "[Renderer] Creating widget of type: " << c.type << std::endl;
-            if (c.type == "background") {
-                createWidget<CBackground>(widgets[surf.m_outputID]);
-            } else if (c.type == "input-field") {
+            if (c.type == "input-field") {
+                // Skip input-field widgets if global flag is set
+                if (hideInput)
+                    continue;
                 createWidget<CPasswordInputField>(widgets[surf.m_outputID]);
+            } else if (c.type == "background") {
+                createWidget<CBackground>(widgets[surf.m_outputID]);
             } else if (c.type == "label") {
                 createWidget<CLabel>(widgets[surf.m_outputID]);
             } else if (c.type == "shape") {
