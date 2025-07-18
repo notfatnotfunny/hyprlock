@@ -416,13 +416,10 @@ std::vector<ASP<IWidget>>& CRenderer::getOrCreateWidgetsFor(const CSessionLockSu
                 continue;
 
             // by type
-            if (c.type == "input-field") {
-                // Skip input-field widgets if global flag is set
-                if (hideInput)
-                    continue;
+	    if (c.type == "background") {
+		createWidget<CBackground>(widgets[surf.m_outputID]);
+	    } else if (c.type == "input-field" && !hideInput) {
                 createWidget<CPasswordInputField>(widgets[surf.m_outputID]);
-            } else if (c.type == "background") {
-                createWidget<CBackground>(widgets[surf.m_outputID]);
             } else if (c.type == "label") {
                 createWidget<CLabel>(widgets[surf.m_outputID]);
             } else if (c.type == "shape") {

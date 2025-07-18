@@ -25,8 +25,6 @@ public:
 
 private:
     bool isTouchActive = false;
-    void drawGrid(const Cairo::RefPtr<Cairo::Context>& cr);
-    void drawPattern(const Cairo::RefPtr<Cairo::Context>& cr);
     std::vector<int> m_patternPath;
     std::vector<int> m_configuredPattern;
     static constexpr int GRID_SIZE = 3;

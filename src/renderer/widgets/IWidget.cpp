@@ -274,3 +274,7 @@ void IWidget::setHover(bool hover) {
 bool IWidget::isHovered() const {
     return hovered;
 }
+
+// bool IWidget::containsPoint(const Vector2D& pos) const {
+//     return getBoundingBoxWl().containsPoint(pos);
+// }

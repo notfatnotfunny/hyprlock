@@ -18,45 +18,32 @@ void PatternLockWidget::registerSelf(const ASP<PatternLockWidget>& self) {
 void PatternLockWidget::configure(const std::unordered_map<std::string, std::any>& props, const SP<COutput>& pOutput) {
     viewport = pOutput ? pOutput->getViewport() : Vector2D{300, 300};
     // Parse position from config using CLayoutValueData
-    if (props.contains("position")) {
-        try {
-            position = CLayoutValueData::fromAnyPv(props.at("position"))->getAbsolute(viewport);
-        } catch (...) { position = {0, 0}; }
-    } else {
-        position = {0, 0};
-    }
-    if (props.contains("halign")) {
-        try { halign = std::any_cast<Hyprlang::STRING>(props.at("halign")); } catch (...) { halign = "center"; }
-    } else { halign = "center"; }
-    if (props.contains("valign")) {
-        try { valign = std::any_cast<Hyprlang::STRING>(props.at("valign")); } catch (...) { valign = "center"; }
-    } else { valign = "center"; }
-    if (props.contains("zindex")) {
-        try { zindex = std::any_cast<Hyprlang::INT>(props.at("zindex")); } catch (...) { zindex = 0; }
-    } else { zindex = 0; }
-    // Parse pattern from config
-    if (props.contains("pattern")) {
-        try {
-            std::string patternStr = std::any_cast<Hyprlang::STRING>(props.at("pattern"));
-            m_configuredPattern = parsePatternString(patternStr);
-        } catch (const std::exception& e) {
-            m_configuredPattern.clear();
-        }
+    try {
+	position = CLayoutValueData::fromAnyPv(props.at("position"))->getAbsolute(viewport);
+	halign = std::any_cast<Hyprlang::STRING>(props.at("halign"));
+	valign = std::any_cast<Hyprlang::STRING>(props.at("valign"));
+	zindex = std::any_cast<Hyprlang::INT>(props.at("zindex"));
+	std::string patternStr = std::any_cast<Hyprlang::STRING>(props.at("pattern"));
+	m_configuredPattern = parsePatternString(patternStr);
+    } catch (const std::bad_any_cast& e) {
+	RASSERT(false, "Failed to construct PatternWidget", e.what());
+    } catch (const std::out_of_range& e) {
+        RASSERT(false, "Missing property for PatternWidget: {}", e.what());
     }
 }
 
 // Helper to compute anchor point based on alignment and position
 Vector2D computeAnchor(const Vector2D& viewport, const Vector2D& gridSize, const Vector2D& offset, const std::string& halign, const std::string& valign) {
     double x = 0, y = 0;
-    // Horizontal alignment
+    
     if (halign == "left") x = 0;
     else if (halign == "center") x = (viewport.x - gridSize.x) / 2.0;
     else if (halign == "right") x = viewport.x - gridSize.x;
-    // Vertical alignment (remember: (0,0) is bottom-left, (0,height) is top-left)
+    
     if (valign == "bottom") y = 0;
     else if (valign == "center") y = (viewport.y - gridSize.y) / 2.0;
     else if (valign == "top") y = viewport.y - gridSize.y;
-    // Apply offset
+    
     return {x + offset.x, y + offset.y};
 }
 
@@ -67,9 +54,9 @@ bool PatternLockWidget::draw(const SRenderData& data) {
     double cellW = (size.x - 2 * margin) / (GRID_SIZE - 1);
     double cellH = (size.y - 2 * margin) / (GRID_SIZE - 1);
     int rounding = dotRadius; // full rounding for circle
-    // Compute anchor for grid
+    
     Vector2D anchor = computeAnchor(viewport, size, position, halign, valign);
-    // Draw dots, coloring touched ones blue
+    
     for (int y = 0; y < GRID_SIZE; ++y) {
         for (int x = 0; x < GRID_SIZE; ++x) {
             int idx = y * GRID_SIZE + x;
@@ -89,14 +76,6 @@ void PatternLockWidget::setPatternPath(const std::vector<int>& path) {
 
 void PatternLockWidget::clearPatternPath() {
     m_patternPath.clear();
-}
-
-void PatternLockWidget::drawGrid(const Cairo::RefPtr<Cairo::Context>& cr) {
-    // Unused in new draw implementation
-}
-
-void PatternLockWidget::drawPattern(const Cairo::RefPtr<Cairo::Context>& cr) {
-    // Unused in new draw implementation
 }
 
 bool PatternLockWidget::containsPoint(const Hyprutils::Math::Vector2D& pos) const {

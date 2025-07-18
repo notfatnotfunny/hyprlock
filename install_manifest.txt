@@ -1,0 +1,3 @@
+/usr/local/bin/hyprlock
+/usr/local/etc/pam.d/hyprlock
+/usr/local/share/hypr/hyprlock.conf
