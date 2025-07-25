@@ -330,6 +330,8 @@ void CConfigManager::init() {
     m_config.addSpecialCategory("pattern-lock", Hyprlang::SSpecialCategoryOptions{.key = nullptr, .anonymousKeyBased = true});
     m_config.addSpecialConfigValue("pattern-lock", "monitor", Hyprlang::STRING{""});
     m_config.addSpecialConfigValue("pattern-lock", "position", LAYOUTCONFIG("0,0"));
+    m_config.addSpecialConfigValue("pattern-lock", "size", LAYOUTCONFIG("300,300"));
+    m_config.addSpecialConfigValue("pattern-lock", "dot_size", Hyprlang::INT(15));
     m_config.addSpecialConfigValue("pattern-lock", "halign", Hyprlang::STRING{"center"});
     m_config.addSpecialConfigValue("pattern-lock", "valign", Hyprlang::STRING{"center"});
     m_config.addSpecialConfigValue("pattern-lock", "pattern", Hyprlang::STRING{""});
@@ -537,6 +539,8 @@ std::vector<CConfigManager::SWidgetConfig> CConfigManager::getWidgetConfigs() {
             .monitor = std::any_cast<Hyprlang::STRING>(m_config.getSpecialConfigValue("pattern-lock", "monitor", k.c_str())),
             .values = {
                 {"position", m_config.getSpecialConfigValue("pattern-lock", "position", k.c_str())},
+                {"size", m_config.getSpecialConfigValue("pattern-lock", "size", k.c_str())},
+                {"dot_size", m_config.getSpecialConfigValue("pattern-lock", "dot_size", k.c_str())},
                 {"halign", m_config.getSpecialConfigValue("pattern-lock", "halign", k.c_str())},
                 {"valign", m_config.getSpecialConfigValue("pattern-lock", "valign", k.c_str())},
                 {"pattern", m_config.getSpecialConfigValue("pattern-lock", "pattern", k.c_str())},

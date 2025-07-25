@@ -708,16 +708,13 @@ void CHyprlock::onClick(uint32_t button, bool down, const Vector2D& pos) {
     if (!m_focusedOutput->m_sessionLockSurface)
         return;
 
-    double fractionalScale = m_focusedOutput->m_sessionLockSurface->fractionalScale;
-    Vector2D SCALEDPOS = pos * fractionalScale;
+    const auto SCALEDPOS = pos * m_focusedOutput->m_sessionLockSurface->fractionalScale;
     const auto widgets   = g_pRenderer->getOrCreateWidgetsFor(*m_focusedOutput->m_sessionLockSurface);
     if (widgets.empty()) {
         return;
     }
     for (const auto& widget : widgets) {
-        std::string typeName = typeid(*widget).name();
-        bool contains = widget->containsPoint(SCALEDPOS);
-        if (contains)
+        if (widget->containsPoint(SCALEDPOS))
             widget->onClick(button, down, SCALEDPOS);
     }
 }

@@ -17,7 +17,7 @@ public:
     void configure(const std::unordered_map<std::string, std::any>& props, const SP<COutput>& pOutput) override;
     bool draw(const SRenderData& data) override;
 
-    void setPatternPath(const std::vector<int>& path); // path as sequence of dot indices 0-8
+    void createGrid();
     void clearPatternPath();
 
     bool containsPoint(const Hyprutils::Math::Vector2D& pos) const override;
@@ -28,13 +28,17 @@ private:
     std::vector<int> m_patternPath;
     std::vector<int> m_configuredPattern;
     static constexpr int GRID_SIZE = 3;
-    Vector2D viewport = {300, 300};
-    Vector2D position = {0, 0}; // offset from anchor
+    Vector2D viewport = {1920, 1080};
+    std::vector<std::vector<Vector2D>> GRID;
+    std::vector<std::vector<bool>> grid;
+    Vector2D size = {300,300};
+    double dotRadius = 15;
+    Vector2D position = {0, 0}; 
     std::string halign = "center";
     std::string valign = "center";
     int zindex = 0;
     AWP<PatternLockWidget> m_self;
-    int pointToDotIndex(const Hyprutils::Math::Vector2D& pt) const;
+    Vector2D pointToDotIndex(const Hyprutils::Math::Vector2D& pt) const;
     std::vector<int> parsePatternString(const std::string& patternStr) const;
     bool checkPatternMatch() const;
 }; 

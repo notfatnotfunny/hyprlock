@@ -7,7 +7,6 @@
 #include <pwd.h>
 #include <hyprutils/string/String.hpp>
 #include <hyprutils/string/VarList.hpp>
-#include <iostream> // Added for debug output
 
 using namespace Hyprutils::String;
 
